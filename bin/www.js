@@ -12,9 +12,15 @@ var http = require('http');
  * Get port from environment and store in Express.
  */
 
+global.users = {};
 
 var port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
+
+function gettimestamp() {
+  var now = new Date();
+  return now.getHours()+":"+now.getMinutes()+":"+now.getSeconds();
+}
 
 function logger(status,code) {
   //set default value
@@ -23,9 +29,9 @@ function logger(status,code) {
   }
 
   //setup time
-  var now = new Date();
+
   var content = "";
-  now = now.getHours()+":"+now.getMinutes()+":"+now.getSeconds();
+  now = gettimestamp();
 
 
   //switch
@@ -131,7 +137,47 @@ io.on('connection', function(socket){
     console.log('connection initialized',socket.id,socket.request.connection.remoteAddress.replace(/^.*:/, ''));
     socket.on('disconnect', function () {
         console.log(socket.id,"disconnected");
+        io.emit('broadcast',users[socket.id]);
+        delete users[socket.id];
+        console.log(users);
     });
+
+    socket.on('rename', function(data) {
+      try {
+        var user = JSON.parse(data);
+        // console.log(user.newname);
+        if (users[socket.id] != user.newname){
+          io.emit('broadcast',data);
+        }
+      }catch (e){
+        //
+      }
+    });
+
+    socket.on('newuser', function (data) {
+      try {
+        var newuser = JSON.parse(data);
+        // console.log(newuser.name);
+        users[socket.id] = newuser.name;
+        io.emit('broadcast_connect',data);
+        console.log(data);
+      }catch (e){
+        //
+      }
+    });
+
+  socket.on('message', function (data) {
+    try {
+      var newuser = JSON.parse(data);
+      // data.name = users[socket.id];
+      // console.log(newuser.message);
+      io.emit('broadcast',data);
+    }catch (e){
+      //
+    }
+
+
+  });
 
     
     // io.emit('user_connect','{"name": "'+ +'","uname": "heysulo"}');
