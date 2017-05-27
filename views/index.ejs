@@ -23,8 +23,8 @@
       <div class="row">
         <div class="form-group col-xs-12">
           <!--<textarea class="form-control" rows="20" id="content"></textarea>-->
-            <div class=" row" style="background-color: #eee;min-height: 250px;padding: 5px;" id="content">
-                <div class="col-xs-12">Adoooooooooooow</div>
+            <div class=" row" style="background-color: #eee;min-height: 250px;padding: 5px;max-height: 80%;overflow: scroll;" id="content">
+                <!--<div class="col-xs-12">Adoooooooooooow</div>-->
             </div>
         </div>
           <div class="col-xs-12">
@@ -61,9 +61,33 @@
 
   socket.on('broadcast_connect',function(data){
       var obj = JSON.parse(data);
-      document.getElementById("content").innerHTML += '<div class="col-xs-12" style="color:#a8a8a8;">'+ obj.name+' connected to the chat room</div>';
+//      console.log(data);
+      document.getElementById("content").innerHTML += '<div class="col-xs-12" style="color:#a8a8a8;">['+ obj.time + "] &nbsp;&nbsp;" + obj.name+' connected to the chat room</div>';
   });
 
+  socket.on('broadcast_disconnect',function(data){
+      var obj = JSON.parse(data);
+//      console.log(data);
+      document.getElementById("content").innerHTML += '<div class="col-xs-12" style="color:#a8a8a8;">['+ obj.time + "] &nbsp;&nbsp;" + obj.name+' disconnected from the chat room</div>';
+  });
+
+  socket.on('broadcast_rename',function(data){
+      var obj = JSON.parse(data);
+//      console.log(data);
+      document.getElementById("content").innerHTML += '<div class="col-xs-12" style="color:#a8a8a8;">['+ obj.time + "] &nbsp;&nbsp;" + obj.oldname+' renamed to ' + obj.newname+'</div>';
+  });
+
+  socket.on('broadcast_message',function(data){
+      var obj = JSON.parse(data);
+//      console.log(data);
+      document.getElementById("content").innerHTML += '<div class="col-xs-12" style="color:#000;">['+ obj.time + "] &nbsp;&nbsp;" + obj.name+ ' : ' + obj.message+'</div>';
+  });
+
+  $('#content').bind("DOMSubtreeModified",function(){
+//      console.log("sdsdsd");
+      var objDiv = document.getElementById("content");
+      objDiv.scrollTop = objDiv.scrollHeight;
+  });
 
   $("#username").blur(function(){
       // action goes here!!
@@ -74,6 +98,15 @@
     $("#send").click(function () {
         var msg = '{"message": "'+$("#userinput").val()+'"}';
         socket.emit("message",msg);
+        $("#userinput").val("");
+    });
+
+    $("#userinput").keypress(function (e) {
+        if(e.which == 13 && $("#userinput").val()!="") {
+            var msg = '{"message": "'+$("#userinput").val()+'"}';
+            socket.emit("message",msg);
+            $("#userinput").val("");
+        }
     });
 </script>
 

@@ -19,7 +19,7 @@ app.set('port', port);
 
 function gettimestamp() {
   var now = new Date();
-  return now.getHours()+":"+now.getMinutes()+":"+now.getSeconds();
+  return ("0" + now.getHours()).slice(-2)+":"+("0" + now.getMinutes()).slice(-2)+":"+("0" + now.getSeconds()).slice(-2);
 }
 
 function logger(status,code) {
@@ -136,31 +136,33 @@ function onListening() {
 io.on('connection', function(socket){
     console.log('connection initialized',socket.id,socket.request.connection.remoteAddress.replace(/^.*:/, ''));
     socket.on('disconnect', function () {
-        console.log(socket.id,"disconnected");
-        io.emit('broadcast',users[socket.id]);
+        // console.log(socket.id,"disconnected");
+        var newjson = '{"name": "'+users[socket.id]+'","time": "'+gettimestamp()+'"}';
+        io.emit('broadcast_disconnect',newjson);
         delete users[socket.id];
-        console.log(users);
+        // console.log(users);
     });
 
     socket.on('rename', function(data) {
       try {
-        var user = JSON.parse(data);
-        // console.log(user.newname);
-        if (users[socket.id] != user.newname){
-          io.emit('broadcast',data);
+        var newuser = JSON.parse(data);
+        var newjson = '{"oldname": "'+users[socket.id]+'","time": "'+gettimestamp()+'","newname":"'+newuser.newname +'"}';
+        if (users[socket.id] != newuser.newname){
+          io.emit('broadcast_rename',newjson);
+          // console.log(newjson);
         }
       }catch (e){
-        //
+        console.log(e);
       }
     });
 
     socket.on('newuser', function (data) {
       try {
         var newuser = JSON.parse(data);
-        // console.log(newuser.name);
         users[socket.id] = newuser.name;
-        io.emit('broadcast_connect',data);
-        console.log(data);
+        var newjson = '{"name": "'+newuser.name+'","time": "'+gettimestamp()+'"}';
+        io.emit('broadcast_connect',newjson);
+        // console.log(data);
       }catch (e){
         //
       }
@@ -169,9 +171,8 @@ io.on('connection', function(socket){
   socket.on('message', function (data) {
     try {
       var newuser = JSON.parse(data);
-      // data.name = users[socket.id];
-      // console.log(newuser.message);
-      io.emit('broadcast',data);
+      var newjson = '{"name": "'+users[socket.id]+'","time": "'+gettimestamp()+'","message":"'+newuser.message +'"}';
+      io.emit('broadcast_message',newjson);
     }catch (e){
       //
     }
