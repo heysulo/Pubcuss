@@ -1,46 +1,47 @@
-/**
- * Created by sulochana on 5/27/17.
- */
+var express = require('express');
+var path = require('path');
+var favicon = require('serve-favicon');
+var logger = require('morgan');
+var cookieParser = require('cookie-parser');
+var bodyParser = require('body-parser');
 
-var moment = require("moment");
-var fs = require('fs');
+var index = require('./routes/index');
+var users = require('./routes/users');
 
+var app = express();
 
+// view engine setup
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'ejs');
 
-var logstream = fs.createWriteStream("log.txt");
+// uncomment after placing your favicon in /public
+//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+app.use(logger('dev'));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(express.static(path.join(__dirname, 'public')));
 
-function logger(status,code) {
-    //set default value
-    if (code==undefined){
-        code = 0;
-    }
+app.use('/', index);
+app.use('/users', users);
+app.use('/bower_components',express.static(path.join('bower_components')));
 
-    //setup time
-    var now = new Date();
-    var content = "";
-    now = now.getHours()+":"+now.getMinutes()+":"+now.getSeconds();
+// catch 404 and forward to error handler
+app.use(function(req, res, next) {
+  var err = new Error('Not Found');
+  err.status = 404;
+  next(err);
+});
 
+// error handler
+app.use(function(err, req, res, next) {
+  // set locals, only providing error in development
+  res.locals.message = err.message;
+  res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-    //switch
-    switch (code){
-        case 0:
-            content = now + " [INFO] " + status;
-            break;
-        case 1:
-            content = now + " [WARN] " + status;
-            break;
-        case 2:
-            content = now + " [CRIT] " + status;
-            break;
-        default:
-            content = now + " [????] " + status;
-            break;
-    }
+  // render the error page
+  res.status(err.status || 500);
+  res.render('error');
+});
 
-    //log to file
-    fs.appendFile('log.txt', content+"\n", function (err) {
-        if (err) throw err;
-        console.log('Saved!');
-    });
-}
-
+module.exports = app;
