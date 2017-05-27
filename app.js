@@ -6,6 +6,7 @@ var moment = require("moment");
 var fs = require('fs');
 
 
+
 var logstream = fs.createWriteStream("log.txt");
 
 function logger(status,code) {
