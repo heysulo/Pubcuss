@@ -11,7 +11,7 @@ var chat = require('./routes/chat');
 
 var app = express();
 
-global.ipaddress = "localhost";
+global.ipaddress = "pubcuss.herokuapp.com";
 //facebook login
 
 var passport = require('passport');
