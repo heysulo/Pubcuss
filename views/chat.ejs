@@ -48,7 +48,7 @@
 
 <script src="/socket.io/socket.io.js"></script>
 <script>
-  var socket = io.connect('<%= ip%>:3000');
+  var socket = io.connect('<%= ip%>');
 
   socket.on('connect',function(){
       // Send ehlo event right after connect:
