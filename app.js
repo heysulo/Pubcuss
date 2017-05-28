@@ -12,7 +12,7 @@ var chat = require('./routes/chat');
 var app = express();
 
 
-var dev = 1;
+var dev = 0;
 if (dev == 1){
     global.ipaddress = "localhost:3000";
 }else{
