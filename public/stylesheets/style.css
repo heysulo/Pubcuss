@@ -6,3 +6,26 @@ body {
 a {
   color: #00B7FF;
 }
+
+
+
+.usrbox{
+  height: 48px;
+}
+
+.usrimg{
+  background-repeat : no-repeat !important;;
+  height: 100%;
+  width: 50px;
+  display: inline-block;
+
+}
+
+.usrname{
+  overflow:hidden;
+  text-overflow:clip;
+  padding-top: 5px;
+  font-weight: bold;
+  margin-left: 55px;
+  width: 200px;
+}

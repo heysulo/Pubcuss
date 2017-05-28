@@ -138,16 +138,17 @@ io.on('connection', function(socket){
     console.log("ip",global.ipaddress);
     socket.on('disconnect', function () {
         // console.log(socket.id,"disconnected");
-        var newjson = '{"name": "'+users[socket.id]+'","time": "'+gettimestamp()+'"}';
+        var newjson = '{"name": "'+users[socket.id][0]+'","time": "'+gettimestamp()+'"}';
         io.emit('broadcast_disconnect',newjson);
         delete users[socket.id];
+        io.emit('broadcast_listupdate',users);
     });
 
     socket.on('rename', function(data) {
       try {
         var newuser = JSON.parse(data);
-        var newjson = '{"oldname": "'+users[socket.id]+'","time": "'+gettimestamp()+'","newname":"'+newuser.newname +'"}';
-        if (users[socket.id] != newuser.newname){
+        var newjson = '{"oldname": "'+users[socket.id][0]+'","time": "'+gettimestamp()+'","newname":"'+newuser.newname +'"}';
+        if (users[socket.id][0] != newuser.newname){
           io.emit('broadcast_rename',newjson);
           // console.log(newjson);
         }
@@ -159,10 +160,11 @@ io.on('connection', function(socket){
     socket.on('newuser', function (data) {
       try {
         var newuser = JSON.parse(data);
-        users[socket.id] = newuser.name;
+        users[socket.id] = [newuser.name,newuser.image,newuser.id];
         var newjson = '{"name": "'+newuser.name+'","time": "'+gettimestamp()+'"}';
         io.emit('broadcast_connect',newjson);
-        // console.log(data);
+        io.emit('broadcast_listupdate',users);
+        console.log(newuser.id);
       }catch (e){
         //
       }
@@ -171,7 +173,7 @@ io.on('connection', function(socket){
   socket.on('message', function (data) {
     try {
       var newuser = JSON.parse(data);
-      var newjson = '{"name": "'+users[socket.id]+'","time": "'+gettimestamp()+'","message":"'+newuser.message +'"}';
+      var newjson = '{"name": "'+users[socket.id][0]+'","time": "'+gettimestamp()+'","message":"'+newuser.message +'"}';
       io.emit('broadcast_message',newjson);
     }catch (e){
       //

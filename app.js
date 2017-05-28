@@ -34,7 +34,7 @@ passport.use(new Strategy({
         // record.  In a production-quality application, the Facebook profile should
         // be associated with a user record in the application's database, which
         // allows for account linking and authentication with other identity
-        console.log(profile);
+        console.log(profile.id);
         // providers.
         return cb(null, profile);
     }));
@@ -76,16 +76,20 @@ app.use('/users', function (req,res) {
     res.send("SDSDSDSDDSSD");
 });
 app.use('/bower_components',express.static(path.join('bower_components')));
+app.use('/public',express.static(path.join('public')));
 
 app.get('/auth/facebook', passport.authenticate('facebook'));
 
 app.get('/auth/facebook/callback',
     passport.authenticate('facebook', { failureRedirect: '/login' }),
     function(req, res) {
-        console.log("sss");
         res.redirect('/chat');
     });
 
+app.get('/logout', function(req, res){
+    req.logout();
+    res.redirect('/');
+})
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

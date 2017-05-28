@@ -1,5 +1,28 @@
 <html>
+<head>
+    <% include elements/head.ejs %>
+</head>
 <body>
-<a href="/auth/facebook">Login</a>
+<div class="container">
+    <div class="row">
+        <div class="col-xs-3"></div>
+        <div class="col-xs-6">
+            <div class="alert alert-success" role="alert"><b>Node.JS application developed by</b> heysulo</div>
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <p>You have to login to access the group conversation</p>
+                    <a href="/auth/facebook">
+                        <button type="button" class="btn btn-success" aria-label="Left Align">
+                            Login with Facebook
+                        </button>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-xs-3"></div>
+    </div>
+
+</div>
 </body>
 </html>

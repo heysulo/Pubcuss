@@ -4,7 +4,12 @@ var router = express.Router();
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express',randomname:random() });
+  if (req.user == undefined){
+    res.render('index', { title: 'Express',randomname:random() });
+  }else{
+    res.redirect("/chat");
+  }
+
 });
 
 module.exports = router;
