@@ -103,7 +103,9 @@
               // do stuff
 
               //console.log(data[property][0]);
-              cont.innerHTML += '<img src="'+ data[property][1] +'" title="'+ data[property][0] + '">';
+              if (data[property][1]!=null){
+                  cont.innerHTML += '<img src="'+ data[property][1] +'" title="'+ data[property][0] + '">';
+              }
 
 
           }
