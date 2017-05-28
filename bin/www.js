@@ -135,12 +135,13 @@ function onListening() {
 
 io.on('connection', function(socket){
     console.log('connection initialized',socket.id,socket.request.connection.remoteAddress.replace(/^.*:/, ''));
+
+    console.log("ip",global.ipaddress);
     socket.on('disconnect', function () {
         // console.log(socket.id,"disconnected");
         var newjson = '{"name": "'+users[socket.id]+'","time": "'+gettimestamp()+'"}';
         io.emit('broadcast_disconnect',newjson);
         delete users[socket.id];
-        // console.log(users);
     });
 
     socket.on('rename', function(data) {
